@@ -16,16 +16,23 @@ const server = http.createServer(app);
 // Connect to Database
 connectDB();
 
+// Allowed origins: Vercel frontend URL in production, localhost in dev
+const ALLOWED_ORIGINS = [
+  process.env.FRONTEND_URL,        // e.g. https://your-app.vercel.app
+  'http://localhost:5173',          // local Vite dev server
+  'http://localhost:4173',          // local Vite preview
+].filter(Boolean);
+
 // Setup Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: ALLOWED_ORIGINS,
     methods: ["GET", "POST"]
   }
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: ALLOWED_ORIGINS }));
 app.use(express.json());
 
 // REST API Routes
